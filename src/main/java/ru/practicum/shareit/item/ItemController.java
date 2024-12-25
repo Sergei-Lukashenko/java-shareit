@@ -21,7 +21,7 @@ public class ItemController {
 
     @GetMapping
     public Collection<ItemDto> findAll(@RequestHeader(USERID_HEADER) Long userId) {
-        log.info("Методом GET запрошен список вещей пользователя {}", userId);
+        log.info("Методом GET запрошен список вещей пользователя с ид = {}", userId);
         return itemService.findAllForUser(userId);
     }
 
