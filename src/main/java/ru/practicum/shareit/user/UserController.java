@@ -3,10 +3,9 @@ package ru.practicum.shareit.user;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.ConditionsNotMetException;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserMapper;
 
 import java.util.Collection;
 
@@ -18,43 +17,43 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public Collection<UserDto> findAll() {
+    public ResponseEntity<Collection<UserDto>> findAll() {
         log.info("Методом GET запрошен список пользователей");
-        return userService.findAll();
+        Collection<UserDto> users = userService.findAll();
+        log.info("Подготовлен ответ на GET /users с телом: {}", users);
+        return ResponseEntity.ok().body(users);
     }
 
     @GetMapping("/{userId}")
-    public UserDto findOne(@PathVariable Long userId) {
+    public ResponseEntity<UserDto> findOne(@PathVariable Long userId) {
         log.info("Методом GET запрошен пользователь по идентификатору {}", userId);
-        return userService.findById(userId);
+        UserDto userDto = userService.findById(userId);
+        log.info("Подготовлен ответ на GET /users/{} с телом: {}", userId, userDto);
+        return ResponseEntity.ok().body(userDto);
     }
 
     @PostMapping
-    public UserDto create(@Valid @RequestBody UserDto user) {
+    public ResponseEntity<UserDto> create(@Valid @RequestBody UserDto user) {
         log.info("Пришел POST запрос /users с телом: {}", user);
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
-            log.error("Получен запрос на создание пользователя с пустым eMail");
-            throw new ConditionsNotMetException("Нельзя создавать пользователей без eMail");
-        }
-        final UserDto newUser = userService.create(UserMapper.toUser(user));
+        final UserDto newUser = userService.create(user);
         log.info("Подготовлен ответ на POST /users с телом: {}", newUser);
-        return newUser;
+        return ResponseEntity.ok().body(newUser);
     }
 
     @PatchMapping("/{userId}")
-    public UserDto update(@PathVariable Long userId,
+    public ResponseEntity<UserDto> update(@PathVariable Long userId,
                           @Valid @RequestBody UserDto user) {
         log.info("Пришел PATCH запрос /users/{} с телом: {}", userId, user);
-        final UserDto updatedUser = userService.update(userId, UserMapper.toUser(user));
+        final UserDto updatedUser = userService.update(userId, user);
         log.info("Подготовлен ответ на PATCH /users/{} с телом: {}", userId, updatedUser);
-        return updatedUser;
+        return ResponseEntity.ok().body(updatedUser);
     }
 
     @DeleteMapping("/{userId}")
-    public UserDto delete(@PathVariable Long userId) {
+    public ResponseEntity<UserDto> delete(@PathVariable Long userId) {
         log.info("Пришел DELETE запрос /users/{}", userId);
         final UserDto deletedUser = userService.delete(userId);
         log.info("Подготовлен ответ DELETE /users/{} с телом: {}", userId, deletedUser);
-        return deletedUser;
+        return ResponseEntity.ok().body(deletedUser);
     }
 }

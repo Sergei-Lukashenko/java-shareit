@@ -31,7 +31,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleUserAlreadyExists(final UserAlreadyExists exception) {
+    public ErrorResponse handleUserAlreadyExists(final UserAlreadyExistsException exception) {
         log.error("Уже существует другой объект с указанными в запросе ключевыми данными", exception);
         return new ErrorResponse(
                 "409 USER ALREADY EXISTS",

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.storage;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -11,6 +12,7 @@ import java.util.*;
 
 @Primary
 @Repository
+@Slf4j
 @RequiredArgsConstructor
 public class InMemoryItemStorage implements ItemStorage {
     private final UserStorage userStorage;
@@ -21,7 +23,7 @@ public class InMemoryItemStorage implements ItemStorage {
     @Override
     public Collection<Item> findAllForUser(final Long userId) {
         return items.values().stream()
-                .filter(it -> Objects.equals(it.getOwner().getId(), userId))
+                .filter(it -> Objects.equals(it.getUserId(), userId))
                 .toList();
     }
 
@@ -33,7 +35,7 @@ public class InMemoryItemStorage implements ItemStorage {
     @Override
     public Item create(final Long userId, final Item item) {
         item.setId(++maxId);
-        item.setOwner(userStorage.findOneById(userId));
+        item.setUserId(userId);
         items.put(item.getId(), item);
         return item;
     }
@@ -42,7 +44,9 @@ public class InMemoryItemStorage implements ItemStorage {
     public Item update(final Long userId, final Long itemId, final Item item) {
         Item updatedItem = findOneById(itemId);
 
-        if (!Objects.equals(updatedItem.getOwner().getId(), userId)) {
+        if (!Objects.equals(updatedItem.getUserId(), userId)) {
+            log.error("Пользователь с ид = {} пытается обновить вещь пользователя с ид = {}",
+                    userId, updatedItem.getUserId());
             throw new NotFoundException("Пользователь не является владельцем указанной вещи");
         }
 

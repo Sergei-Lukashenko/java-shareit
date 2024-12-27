@@ -2,12 +2,12 @@ package ru.practicum.shareit.user.storage;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.exception.UserAlreadyExists;
 import ru.practicum.shareit.user.User;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Primary
 @Repository
@@ -35,24 +35,8 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User update(final Long userId, final User user) {
-        final User storedUser = findOneById(userId);
-
-        if (user.getName() != null) {
-            storedUser.setName(user.getName());
-        }
-
-        final String newUserEmail = user.getEmail();
-        if (newUserEmail != null && !storedUser.getEmail().equals(newUserEmail)) {
-            if (isEmailExists(newUserEmail)) {
-                throw new UserAlreadyExists("Такой email пользователя уже занят");
-            }
-            storedUser.setEmail(newUserEmail);
-        }
-
-        user.setId(userId);
-        users.put(userId, storedUser);
-
-        return storedUser;
+        users.put(userId, user);
+        return user;
     }
 
     @Override
@@ -66,7 +50,14 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public boolean isEmailExists(final String email) {
-        return users.values().stream().anyMatch(u -> email != null && email.equals(u.getEmail()));
+    public long userIdHavingEmail(final String email) {
+        Optional<User> userWithEmail = users.values().stream()
+                .filter(u -> email != null && email.equals(u.getEmail()))
+                .findFirst();
+        if (userWithEmail.isPresent()) {
+            return userWithEmail.get().getId();
+        } else {
+            return 0L;
+        }
     }
 }
