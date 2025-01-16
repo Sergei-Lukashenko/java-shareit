@@ -40,7 +40,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findAllByItemOwnerIdAndStatusAndStartAfterOrderByStartDesc(
             Long ownerId, BookingStatus status, LocalDateTime start);
 
-    // other, used internally
+    // other, used internally, only in services
     List<Booking> findAllByBookerAndItemAndStatusAndEndBefore(User booker, Item item, BookingStatus status, LocalDateTime end);
 
     @Query(value = "SELECT * FROM bookings AS b " +
