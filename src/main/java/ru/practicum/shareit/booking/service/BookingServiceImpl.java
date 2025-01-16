@@ -77,7 +77,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Collection<BookingDto> findByOwnerId(Long ownerId, StateDto state) {
-        userService.findById(ownerId);   // Check for user existence - do not need the returned value
+        userService.findById(ownerId);   // Check for user existence ignoring the returned value
 
         List<Booking> result = Collections.emptyList();
 
@@ -109,10 +109,14 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingDto create(Long bookerId, BookingDto bookingDto) {
         User user = UserMapper.INSTANCE.toUser(userService.findById(bookerId));
+        final Long itemId = bookingDto.getItemId();
+        if (itemId == null) {
+            throw new NotFoundException(BOOKING_NOT_ACCESSIBLE + ". Указан пустой ид. вещи в запросе на бронирование");
+        }
 
         Booking booking = BookingMapper.INSTANCE.toBooking(bookingDto);
 
-        Item item = itemRepository.findById(bookingDto.getItemId())
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException(BOOKING_NOT_ACCESSIBLE + ". Указанная вещь не найдена"));
 
         if (!item.getAvailable()) {
