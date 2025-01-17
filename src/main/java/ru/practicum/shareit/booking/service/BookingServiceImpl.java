@@ -35,7 +35,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto findById(Long userId, Long bookingId) {
-        Booking booking = bookingRepository.findById(bookingId)
+        final Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException(BOOKING_NOT_FOUND));
 
         final Long bookerId = booking.getBooker().getId();
