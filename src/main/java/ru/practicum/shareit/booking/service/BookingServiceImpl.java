@@ -49,28 +49,28 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Collection<BookingDto> findByBookerId(Long bookerId, StateDto state) {
-        List<Booking> result = Collections.emptyList();
+        List<Booking> bookings = Collections.emptyList();
 
         switch (state) {
-            case ALL -> result = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId);
+            case ALL -> bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(bookerId);
 
-            case WAITING -> result = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
+            case WAITING -> bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
                     bookerId, BookingStatus.WAITING);
 
-            case REJECTED -> result = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
+            case REJECTED -> bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
                     bookerId, BookingStatus.REJECTED);
 
-            case CURRENT -> result = bookingRepository.findAllByBookerIdAndStatusAndStartBeforeAndEndAfterOrderByStartDesc(
+            case CURRENT -> bookings = bookingRepository.findAllByBookerIdAndStatusAndStartBeforeAndEndAfterOrderByStartDesc(
                     bookerId, BookingStatus.APPROVED, LocalDateTime.now(), LocalDateTime.now());
 
-            case PAST -> result = bookingRepository.findAllByBookerIdAndStatusAndEndBeforeOrderByStartDesc(
+            case PAST -> bookings = bookingRepository.findAllByBookerIdAndStatusAndEndBeforeOrderByStartDesc(
                     bookerId, BookingStatus.APPROVED, LocalDateTime.now());
 
-            case FUTURE -> result = bookingRepository.findAllByBookerIdAndStatusAndStartAfterOrderByStartDesc(
+            case FUTURE -> bookings = bookingRepository.findAllByBookerIdAndStatusAndStartAfterOrderByStartDesc(
                     bookerId, BookingStatus.APPROVED, LocalDateTime.now());
         }
 
-        return result.stream()
+        return bookings.stream()
                 .map(BookingMapper.INSTANCE::toBookingDto)
                 .toList();
     }
@@ -79,28 +79,28 @@ public class BookingServiceImpl implements BookingService {
     public Collection<BookingDto> findByOwnerId(Long ownerId, StateDto state) {
         userService.findById(ownerId);   // Check for user existence ignoring the returned value
 
-        List<Booking> result = Collections.emptyList();
+        List<Booking> bookings = Collections.emptyList();
 
         switch (state) {
-            case ALL -> result = bookingRepository.findAllByItemOwnerIdOrderByStartDesc(ownerId);
+            case ALL -> bookings = bookingRepository.findAllByItemOwnerIdOrderByStartDesc(ownerId);
 
-            case WAITING -> result = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(
+            case WAITING -> bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(
                     ownerId, BookingStatus.WAITING);
 
-            case REJECTED -> result = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(
+            case REJECTED -> bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(
                     ownerId, BookingStatus.REJECTED);
 
-            case CURRENT -> result = bookingRepository.findAllByItemOwnerIdAndStatusAndStartBeforeAndEndAfterOrderByStartDesc(
+            case CURRENT -> bookings = bookingRepository.findAllByItemOwnerIdAndStatusAndStartBeforeAndEndAfterOrderByStartDesc(
                     ownerId, BookingStatus.APPROVED, LocalDateTime.now(), LocalDateTime.now());
 
-            case PAST -> result = bookingRepository.findAllByItemOwnerIdAndStatusAndEndBeforeOrderByStartDesc(
+            case PAST -> bookings = bookingRepository.findAllByItemOwnerIdAndStatusAndEndBeforeOrderByStartDesc(
                     ownerId, BookingStatus.APPROVED, LocalDateTime.now());
 
-            case FUTURE -> result = bookingRepository.findAllByItemOwnerIdAndStatusAndStartAfterOrderByStartDesc(
+            case FUTURE -> bookings = bookingRepository.findAllByItemOwnerIdAndStatusAndStartAfterOrderByStartDesc(
                     ownerId, BookingStatus.APPROVED, LocalDateTime.now());
         }
 
-        return result.stream()
+        return bookings.stream()
                 .map(BookingMapper.INSTANCE::toBookingDto)
                 .toList();
     }
