@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -164,23 +166,22 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Optional<Booking> findLastBooking(Item item) {
-        Booking lastBooking = bookingRepository.findFirstApprovedByItemIdEndBeforeYesterdayOrderByEndDesc(
-                item.getId());
-        if (lastBooking != null) {
-            return Optional.of(lastBooking);
-        } else {
+        Pageable pageable = PageRequest.of(0, 1);  // первая страница, один результат
+        List<Booking> lastBookingList = bookingRepository.findFirstByItemAndStatusEndsBefore(item,
+                      BookingStatus.APPROVED,
+                      LocalDateTime.now().minusDays(1),
+                      pageable);
+        if (lastBookingList.isEmpty()) {
             return Optional.empty();
+        } else {
+            return Optional.of(lastBookingList.getFirst());
         }
     }
 
     @Override
     public Optional<Booking> findNextBooking(Item item) {
-        Booking nextBooking = bookingRepository.findFirstApprovedByItemIdStartAfterCurrentMomentOrderByStartAsc(
-                item.getId());
-        if (nextBooking != null) {
-            return Optional.of(nextBooking);
-        } else {
-            return Optional.empty();
-        }
+        return bookingRepository.findFirstByItemAndStatusAndStartAfterOrderByStart(item,
+                BookingStatus.APPROVED,
+                LocalDateTime.now());
     }
 }

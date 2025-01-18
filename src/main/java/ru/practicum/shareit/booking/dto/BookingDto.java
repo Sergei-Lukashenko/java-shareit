@@ -29,7 +29,7 @@ public class BookingDto {
     private LocalDateTime end;
 
     @Nullable
-    Long itemId;
+    private Long itemId;
 
     private ItemDto item;
 

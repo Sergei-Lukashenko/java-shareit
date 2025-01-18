@@ -27,8 +27,8 @@ public class Comment {
     private Item item;
 
     @Column(name = "text", nullable = false)
-    String text;
+    private String text;
 
     @Column(name = "created")
-    LocalDateTime created;
+    private LocalDateTime created;
 }

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.storage;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,6 +11,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     // searching by booker
@@ -43,15 +45,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // other, used internally, only in services
     List<Booking> findAllByBookerAndItemAndStatusAndEndBefore(User booker, Item item, BookingStatus status, LocalDateTime end);
 
-    @Query(value = "SELECT * FROM bookings AS b " +
-           "WHERE b.item_id = :itemId AND b.status = 'APPROVED' AND b.end_date < CURRENT_TIMESTAMP - INTERVAL '1 day'" +
-           "ORDER BY b.end_date DESC FETCH FIRST 1 ROWS ONLY",
-            nativeQuery = true)
-    Booking findFirstApprovedByItemIdEndBeforeYesterdayOrderByEndDesc(@Param("itemId") Long itemId);
+    @Query("SELECT b FROM Booking b " +
+            "WHERE b.item = :item AND b.status = :status AND b.end < :topMoment " +
+            "ORDER BY b.end DESC")
+    List<Booking> findFirstByItemAndStatusEndsBefore(@Param("item") Item item,
+                                                     @Param("status") BookingStatus status,
+                                                     @Param("topMoment") LocalDateTime topMoment,
+                                                     Pageable pageable);
 
-    @Query(value = "SELECT * FROM bookings AS b " +
-            "WHERE b.item_id = :itemId AND b.status = 'APPROVED' AND b.start_date > CURRENT_TIMESTAMP " +
-            "ORDER BY b.start_date FETCH FIRST 1 ROWS ONLY",
-            nativeQuery = true)
-    Booking findFirstApprovedByItemIdStartAfterCurrentMomentOrderByStartAsc(@Param("itemId") Long itemId);
+    Optional<Booking> findFirstByItemAndStatusAndStartAfterOrderByStart(Item item, BookingStatus status, LocalDateTime start);
 }

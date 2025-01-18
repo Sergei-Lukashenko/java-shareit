@@ -19,7 +19,7 @@ public class Item {
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
-    User owner;
+    private User owner;
 
     @Column(name = "name", nullable = false)
     private String name;
