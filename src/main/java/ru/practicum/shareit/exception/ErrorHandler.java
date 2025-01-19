@@ -40,6 +40,16 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleUserAccessViolation(final UserAccessViolationException exception) {
+        log.error("Пользователю не разрешен доступ к этому объекту", exception);
+        return new ErrorResponse(
+                "403 FORBIDDEN",
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleThrowable(final Throwable exception) {
         log.error(exception.getMessage(), exception);
