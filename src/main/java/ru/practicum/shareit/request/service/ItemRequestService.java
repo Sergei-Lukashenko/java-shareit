@@ -2,7 +2,7 @@ package ru.practicum.shareit.request.service;
 
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.dto.RequestItemsDto;
+import ru.practicum.shareit.request.dto.RequestedItemsDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.Collection;
@@ -18,5 +18,5 @@ public interface ItemRequestService {
 
     ItemRequest getReqById(Long requestId);
 
-    RequestItemsDto createForItem(Item item, ItemRequest itemRequest);
+    RequestedItemsDto createForItem(Item item, ItemRequest itemRequest);
 }

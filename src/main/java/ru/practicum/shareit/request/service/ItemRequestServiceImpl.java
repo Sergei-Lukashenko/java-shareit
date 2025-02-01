@@ -9,10 +9,10 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
-import ru.practicum.shareit.request.dto.RequestItemsDto;
-import ru.practicum.shareit.request.dto.RequestItemsMapper;
+import ru.practicum.shareit.request.dto.RequestedItemsDto;
+import ru.practicum.shareit.request.dto.RequestedItemsMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.request.model.RequestItems;
+import ru.practicum.shareit.request.model.RequestedItems;
 import ru.practicum.shareit.request.storage.ItemRequestRepository;
 import ru.practicum.shareit.request.storage.RequestItemsRepository;
 import ru.practicum.shareit.user.service.UserService;
@@ -81,24 +81,24 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     @Transactional
-    public RequestItemsDto createForItem(Item item, ItemRequest itemRequest) {
-        RequestItems requestItems = RequestItems.builder()
+    public RequestedItemsDto createForItem(Item item, ItemRequest itemRequest) {
+        RequestedItems requestedItems = RequestedItems.builder()
                 .item(item)
                 .request(itemRequest)
                 .created(LocalDateTime.now())
                 .build();
 
-        requestItems = requestItemsRepository.save(requestItems);
+        requestedItems = requestItemsRepository.save(requestedItems);
 
-        return RequestItemsMapper.INSTANCE.toRequestItemsDto(requestItems);
+        return RequestedItemsMapper.INSTANCE.toRequestItemsDto(requestedItems);
     }
 
     @Transactional
     private ItemRequestDto loadRequestItems(ItemRequest itemRequest) {
-        Collection<RequestItems> requestItems = requestItemsRepository.findByRequest(itemRequest);
+        Collection<RequestedItems> requestedItems = requestItemsRepository.findByRequest(itemRequest);
 
-        List<ItemDto> itemDtos = requestItems.stream()
-                .map(RequestItems::getItem)
+        List<ItemDto> itemDtos = requestedItems.stream()
+                .map(RequestedItems::getItem)
                 .map(ItemMapper.INSTANCE::toItemDto)
                 .toList();
 

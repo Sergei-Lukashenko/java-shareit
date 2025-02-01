@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class RequestItemsDto {
+public class RequestedItemsDto {
     private Long id;
 
     private Long requestId;

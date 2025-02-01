@@ -7,22 +7,22 @@ import ru.practicum.shareit.item.model.Item;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "request_items")
+@Table(name = "requested_items")
 @Data
 @Builder
 @EqualsAndHashCode(of = { "id" })
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestItems {
+public class RequestedItems {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = Item.class)
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, targetEntity = ItemRequest.class)
     @JoinColumn(name = "request_id")
     private ItemRequest request;
 
