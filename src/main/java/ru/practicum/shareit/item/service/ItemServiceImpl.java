@@ -17,6 +17,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.item.storage.CommentRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -37,6 +39,7 @@ public class ItemServiceImpl implements ItemService {
 
     private final UserService userService;
     private final BookingService bookingService;
+    private final ItemRequestService requestService;
 
     @Override
     public Collection<ItemDto> findAllForUser(Long ownerId) {
@@ -73,7 +76,16 @@ public class ItemServiceImpl implements ItemService {
         User owner = UserMapper.INSTANCE.toUser(userService.findById(ownerId));
         Item item = ItemMapper.INSTANCE.toItem(itemDto);
         item.setOwner(owner);
-        return ItemMapper.INSTANCE.toItemDto(itemRepository.save(item));
+
+        item = itemRepository.save(item);
+
+        final Long requestId = itemDto.getRequestId();
+        if (requestId != null) {
+            ItemRequest itemRequest = requestService.getReqById(requestId);
+            requestService.createForItem(item, itemRequest);
+        }
+
+        return ItemMapper.INSTANCE.toItemDto(item);
     }
 
     @Override
