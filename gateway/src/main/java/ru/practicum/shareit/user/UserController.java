@@ -48,37 +48,4 @@ public class UserController {
         log.info("Удаляем пользователя с ID = {}", userId);
         userClient.deleteUser(userId);
     }
-
-
-/*
-    @GetMapping("/{userId}")
-    public ResponseEntity<Object> getUserById(@PathVariable Integer userId) {
-        log.info("Получаем пользователя с ID = {}", userId);
-        return ResponseEntity.ok().body(userClient.getUserById(userId));
-    }
-
-    @GetMapping
-    public ResponseEntity<Object> getAllUsers() {
-        log.info("Получаем всех пользователей");
-        return ResponseEntity.ok().body(userClient.getUsers());
-    }
-
-    @PostMapping
-    public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto dto) {
-        log.info("Создаем нового пользователя");
-        return ResponseEntity.ok().body(userClient.createUser(dto));
-    }
-
-    @PatchMapping("/{userId}")
-    public ResponseEntity<Object> updateUser(@PathVariable Integer userId, @RequestBody UserDto dto) {
-        log.info("Обновляем пользователя с ID = {}", userId);
-        return ResponseEntity.ok().body(userClient.updateUser(userId, dto));
-    }
-
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Object> deleteUser(@PathVariable Integer userId) {
-        log.info("Удаляем пользователя с ID = {}", userId);
-        return ResponseEntity.ok().body(userClient.deleteUser(userId));
-    }
-*/
 }

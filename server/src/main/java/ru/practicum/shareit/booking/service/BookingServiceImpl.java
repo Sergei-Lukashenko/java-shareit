@@ -123,7 +123,6 @@ public class BookingServiceImpl implements BookingService {
 
         if (!item.getAvailable()) {
             throw new ConditionsNotMetException(BOOKING_NOT_ACCESSIBLE + ". Доступность отключена владельцем");
-            //return BookingMapper.INSTANCE.toBookingDto(null);
         }
 
         booking.setBooker(user);
